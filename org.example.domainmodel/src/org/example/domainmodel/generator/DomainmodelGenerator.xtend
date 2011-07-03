@@ -10,23 +10,23 @@ import static extension org.eclipse.xtext.xtend2.lib.ResourceExtensions.*
 
 class DomainmodelGenerator implements IGenerator {
     
-    @Inject extension IQualifiedNameProvider nameProvider 
+    @Inject extension GeneratorNameProvider nameProvider 
     
     override void doGenerate(Resource resource, IFileSystemAccess fsa) {
         for(e: resource.allContentsIterable.filter(typeof(Entity))) {
-            fsa.generateFile(
-                e.fullyQualifiedName.toString.replace(".", "/") + ".java",
+            fsa.generateFile( 
+                (e.eContainer.fullyQualifiedName.toString +"."+ e.name ).replace(".", "/") + ".java",
                 e.compile)
         }
     }
-    
+     
     def compile(Entity e) ''' 
         «IF e.eContainer != null»
             package «e.eContainer.fullyQualifiedName»;
         «ENDIF»
         
         public class «e.name» «IF e.superType != null
-                       »extends «e.superType.fullyQualifiedName» «ENDIF»{
+                        »extends «e.superType.fullyQualifiedName» «ENDIF»{
             «FOR f:e.features»
                 «f.compile»
             «ENDFOR»
