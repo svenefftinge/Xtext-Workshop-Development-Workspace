@@ -6,9 +6,11 @@ package org.example.domainmodel;
 
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.example.domainmodel.jvmmodel.DomainmodelIdentifiableSimpleNameProvider;
 import org.example.domainmodel.naming.DomainmodelQualifiedNameProvider;
 import org.example.domainmodel.scoping.DomainModelImportedNamespaceScopeprovider;
+import org.example.domainmodel.typing.DomainmodelTypeProvider;
 
 import com.google.inject.name.Names;
 
@@ -30,5 +32,10 @@ public class DomainmodelRuntimeModule extends org.example.domainmodel.AbstractDo
 	@Override
 	public Class<? extends IdentifiableSimpleNameProvider> bindIdentifiableSimpleNameProvider() {
 		return DomainmodelIdentifiableSimpleNameProvider.class;
+	}
+	
+	@Override
+	public Class<? extends ITypeProvider> bindITypeProvider() {
+		return DomainmodelTypeProvider.class;
 	}
 }
