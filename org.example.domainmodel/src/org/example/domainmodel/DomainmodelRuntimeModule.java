@@ -3,7 +3,10 @@
  */
 package org.example.domainmodel;
 
+
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
+import org.example.domainmodel.jvmmodel.DomainmodelIdentifiableSimpleNameProvider;
 import org.example.domainmodel.naming.DomainmodelQualifiedNameProvider;
 import org.example.domainmodel.scoping.DomainModelImportedNamespaceScopeprovider;
 
@@ -12,6 +15,7 @@ import com.google.inject.name.Names;
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
+@SuppressWarnings("restriction")
 public class DomainmodelRuntimeModule extends org.example.domainmodel.AbstractDomainmodelRuntimeModule {
 
 	public void configureIScopeProviderDelegate(com.google.inject.Binder binder) {
@@ -21,5 +25,10 @@ public class DomainmodelRuntimeModule extends org.example.domainmodel.AbstractDo
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return DomainmodelQualifiedNameProvider.class;
+	}
+	
+	@Override
+	public Class<? extends IdentifiableSimpleNameProvider> bindIdentifiableSimpleNameProvider() {
+		return DomainmodelIdentifiableSimpleNameProvider.class;
 	}
 }

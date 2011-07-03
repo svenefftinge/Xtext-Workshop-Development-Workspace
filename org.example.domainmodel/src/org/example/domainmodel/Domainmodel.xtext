@@ -35,7 +35,18 @@ Entity:
     (features += Feature)*
   '}'
 ;
- 
+
 Feature:
+	Property | Operation
+;
+ 
+Property:
   name = ID ':' type = JvmTypeReference
 ; 
+
+Operation:
+	visibility=Visibility? 'op' name=ValidID '(' (params+=JvmFormalParameter (',' params+=JvmFormalParameter)*)? ')' ':' type=JvmTypeReference 
+		body=XBlockExpression;
+
+enum Visibility:
+	public | private | protected;

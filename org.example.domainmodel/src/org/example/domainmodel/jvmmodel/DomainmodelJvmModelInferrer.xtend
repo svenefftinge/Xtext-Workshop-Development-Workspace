@@ -16,6 +16,8 @@ import org.example.domainmodel.domainmodel.Entity
 import org.example.domainmodel.domainmodel.Import
 import org.example.domainmodel.domainmodel.Feature
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.example.domainmodel.domainmodel.Property
+import org.example.domainmodel.domainmodel.Operation
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -65,29 +67,39 @@ class DomainmodelJvmModelInferrer implements IJvmModelInferrer {
 		emptyList
 	}
 	
-	def void transform(Feature feature, JvmGenericType type) {
+	def dispatch void transform(Property property, JvmGenericType type) {
 		val jvmField = typesFactory.createJvmField
-		jvmField.simpleName = feature.name
-		jvmField.type = cloneWithProxies(feature.type)
+		jvmField.simpleName = property.name
+		jvmField.type = cloneWithProxies(property.type)
 		jvmField.setVisibility(JvmVisibility::PRIVATE)
 		type.members += jvmField
-		feature.associatePrimary(jvmField)
+		property.associatePrimary(jvmField)
 		
 		val jvmGetter = typesFactory.createJvmOperation
-		jvmGetter.simpleName = "get" + feature.name.toFirstUpper
-		jvmGetter.returnType = cloneWithProxies(feature.type)
+		jvmGetter.simpleName = "get" + property.name.toFirstUpper
+		jvmGetter.returnType = cloneWithProxies(property.type)
 		jvmGetter.setVisibility(JvmVisibility::PUBLIC)
 		type.members += jvmGetter
-		feature.associatePrimary(jvmGetter)
+		property.associatePrimary(jvmGetter)
 		
 		val jvmSetter = typesFactory.createJvmOperation
-		jvmSetter.simpleName = "set" + feature.name.toFirstUpper
+		jvmSetter.simpleName = "set" + property.name.toFirstUpper
 		val parameter = typesFactory.createJvmFormalParameter
-		parameter.name = feature.name.toFirstUpper
-		parameter.parameterType = cloneWithProxies(feature.type)
+		parameter.name = property.name.toFirstUpper
+		parameter.parameterType = cloneWithProxies(property.type)
 		jvmSetter.setVisibility(JvmVisibility::PUBLIC)
 		jvmSetter.parameters += parameter
 		type.members += jvmSetter
-		feature.associatePrimary(jvmSetter)
+		property.associatePrimary(jvmSetter)
+	}
+	
+	def dispatch void transform(Operation operation, JvmGenericType type) {
+		val jvmOperation = typesFactory.createJvmOperation
+		jvmOperation.simpleName = operation.name
+		jvmOperation.returnType = cloneWithProxies(operation.type)
+		jvmOperation.parameters.addAll(operation.params.map(p|cloneWithProxies(p))) 
+		jvmOperation.setVisibility(JvmVisibility::PUBLIC)
+		type.members += jvmOperation
+		operation.associatePrimary(jvmOperation)
 	}
 }

@@ -13,6 +13,7 @@ class DomainmodelGenerator implements IGenerator {
     
     @Inject extension IQualifiedNameProvider nameProvider 
     @Inject extension GeneratorExtensions generatorExtensions
+    @Inject DomainmodelCompiler domainmodelCompiler
     
     override void doGenerate(Resource resource, IFileSystemAccess fsa) {
         for(e: resource.allContentsIterable.filter(typeof(Entity))) {
@@ -45,15 +46,21 @@ class DomainmodelGenerator implements IGenerator {
     	'''
     }
     
-    def compile(Feature f, ImportManager importManager) '''
-        private «f.type.shortName(importManager)» «f.name»;
+    def dispatch compile(Property p, ImportManager importManager) '''
+        private «p.type.shortName(importManager)» «p.name»;
         
-        public «f.type.shortName(importManager)» get«f.name.toFirstUpper»() {
-            return «f.name»;
+        public «p.type.shortName(importManager)» get«p.name.toFirstUpper»() {
+            return «p.name»;
         }
         
-        public void set«f.name.toFirstUpper»(«f.type.shortName(importManager)» «f.name») {
-            this.«f.name» = «f.name»;
+        public void set«p.name.toFirstUpper»(«p.type.shortName(importManager)» «p.name») {
+            this.«p.name» = «p.name»;
         }
     '''
+    
+	def dispatch compile(Operation o, ImportManager importManager) '''
+		public «o.type.shortName(importManager)» «o.name»(«o.parameterList(importManager)») {
+			«domainmodelCompiler.compile(o, importManager)» 
+		}
+	'''
 } 
