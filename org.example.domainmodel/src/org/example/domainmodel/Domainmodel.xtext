@@ -1,5 +1,4 @@
-grammar org.example.domainmodel.Domainmodel with
-                                      org.eclipse.xtext.common.Terminals
+grammar org.example.domainmodel.Domainmodel with org.eclipse.xtext.xbase.Xbase
 
 generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
 
@@ -14,11 +13,11 @@ PackageDeclaration:
 ;
 
 AbstractElement:
-  PackageDeclaration | Type | Import
+  PackageDeclaration | Entity | Import
 ;
 
 QualifiedName:
-  ID ('.' ID)*
+  ID (=>'.' ID)*
 ;
 
 Import:
@@ -28,23 +27,15 @@ Import:
 QualifiedNameWithWildcard:
   QualifiedName '.*'?
 ;
-  
-Type:
-  DataType | Entity
-;
-  
-DataType:
-  'datatype' name=ID
-;
  
 Entity:
   'entity' name = ID 
-              ('extends' superType = [Entity | QualifiedName])?
+              ('extends' superType = JvmTypeReference)?
   '{'
     (features += Feature)*
   '}'
 ;
  
 Feature:
-  (many ?= 'many')? name = ID ':' type = [Type | QualifiedName]
+  name = ID ':' type = JvmTypeReference
 ; 
